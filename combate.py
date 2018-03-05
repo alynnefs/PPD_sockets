@@ -34,23 +34,23 @@ def recv_data():
             thread.interrupt_main()
             break
         if not recv_data:
-                # Recv sem dados, o servidor fecha a conexão
-                print("O servidor finalizou a conexão.")
-                thread.interrupt_main()
-                break
-        else:
-                print("Dado recebido: ", recv_data)
-
-def send_data():
-    # Envia dados para outros clientes conectados ao servidor
-    while 1:
-        send_data = str(raw_input()) # enviar dados para outro jogador
-        if send_data == "q" or send_data == "Q": # finaliza com q ou Q
-            client_socket.send(send_data)
+            # Recv sem dados, o servidor fecha a conexão
+            print("O servidor finalizou a conexão.")
             thread.interrupt_main()
             break
         else:
-            client_socket.send(send_data)
+            print("Dado recebido: ", recv_data)
+
+def send_data(msg):
+    # Envia dados para outros clientes conectados ao servidor
+    while 1:
+        if msg == "q" or msg == "Q": # finaliza com q ou Q
+            client_socket.send(msg)
+            thread.interrupt_main()
+            break
+        else:
+            client_socket.send(msg)
+            break
 
 def desenha_chat(dist, bordaSup, tam):
     pygame.draw.rect(screen, cinza, (dist,bordaSup,tam*3/2,tam))
@@ -94,14 +94,17 @@ if __name__ == "__main__":
                     name = name[:-1]
                 elif event.key == K_RETURN:
                     print(name)
+                    send_data(name)
                     name = ""
+                elif event.key == K_SPACE:
+                    name += " "
+
         screen.fill (cinza)
         desenha_chat(705,400,248)
         block = font.render(name, True, (0, 0, 0))
         rect = block.get_rect()
         #rect.center = screen.get_rect().center
         rect.center = (905,500)
-        print("centro ",rect.center)
         screen.blit(block, rect)
         pygame.display.flip()
         #pygame.display.update()
