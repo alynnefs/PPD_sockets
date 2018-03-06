@@ -65,6 +65,8 @@ def recv_data():
             textsurface = f_chat.render(recv_data.split(",")[1], True, (255, 0, 0))
             screen.blit(textsurface,(710,405))
             #pygame.display.update() # não mostra sem, quebra quando tem
+        elif recv_data.split(",")[0] == '2':
+            print "turno: ",recv_data.split(",")[1]
 
 def send_data(msg):
     # Envia dados para outros clientes conectados ao servidor
@@ -90,25 +92,33 @@ def mostraMatriz(matriz):
         print '|\n'
 
 def cria_matriz_inicial():
-    print id_jogador
+    print "id_jogador: ",id_jogador
     pecas = [['F',1],[1,1],[2,8],[3,5],[4,4],[5,4],[6,4],[7,3],[8,2],[9,1],[10,1],['B',6]]
     pecas2 = [['F',1],[1,1],[2,8],[3,5],[4,4],[5,4],[6,4],[7,3],[8,2],[9,1],[10,1],['B',6]]
-    for i in range(10):
-        for j in range(10):
-            if i < 4 and j < 10:
+    if id_jogador == '1':
+        for i in range(4):
+            for j in range(10):
+            #if i < 4 and j < 10:
                 a = random.randint(0,len(pecas)-1)
                 jogo_inicial[i][j][0] = pecas[a][0] # código da peça
                 pecas[a][1] -= 1
                 if pecas[a][1] == 0:
                     pecas.remove(pecas[a])
-            elif i > 5 and j < 10:
+    elif id_jogador == '2':
+        for i in range(6,10):
+            for j in range(10):
+            #elif i > 5 and j < 10:
                 a = random.randint(0,len(pecas2)-1)
                 jogo_inicial[i][j][0] = pecas2[a][0] # código da peça
                 pecas2[a][1] -= 1
                 if pecas2[a][1] == 0:
                     pecas2.remove(pecas2[a])
-            elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
-                jogo_inicial[i][j][0] = 'X'
+    else:
+        for i in range(4,6):
+            for j in range(2,8):
+        #    elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
+                if j == 2 or j == 3 or j == 6 or j ==7:
+                    jogo_inicial[i][j][0] = 'X'
 
     #mostraMatriz(jogo_inicial)
     valores_matriz()
