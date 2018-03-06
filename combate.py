@@ -3,6 +3,7 @@
 import socket
 import thread
 import sys
+import random
 
 import pygame, sys
 from pygame.locals import *
@@ -15,8 +16,11 @@ displayH = 900
 cinza = (240, 240, 240)
 preto = (0, 0, 0)
 
-font = pygame.font.Font(None, 25)
-myfont = pygame.font.SysFont('arial', 25)
+f_chat = pygame.font.Font(None, 25)
+f_chat2 = pygame.font.SysFont('arial', 25)
+
+casas = [26,88,150,212,274,336,398,460,522,584]
+jogo_inicial = [[' ']*10 for c in range(10)] # gera matriz quadrada de ordem 10
 
 screen = pygame.display.set_mode((displayW,displayH),0,32)
 screen.fill(cinza)
@@ -43,7 +47,7 @@ def recv_data():
             break
         elif recv_data.split(",")[0] == '1': # código de mensagem
             print("Dado recebido: ", recv_data)
-            textsurface = myfont.render(recv_data.split(",")[1], True, (255, 0, 0))
+            textsurface = f_chat.render(recv_data.split(",")[1], True, (255, 0, 0))
             screen.blit(textsurface,(710,405))
 
 def send_data(msg):
@@ -64,6 +68,32 @@ def desenha_chat(dist, bordaSup, tam):
 def protocolo(tipo, msg):
     return "%d," %(tipo)+msg
 
+def mostraMatriz(matriz):
+    for i in range(len(matriz)):
+        print '|',
+        for j in range(len(matriz)):
+            print matriz[i][j],
+        print '|\n'
+
+def cria_matriz_inicial():
+    pecas = [['F',1],[1,1],[2,8],[3,5],[4,4],[5,4],[6,4],[7,3],[8,2],[9,1],[10,1],['B',6]]
+    pecas2 = [['F',1],[1,1],[2,8],[3,5],[4,4],[5,4],[6,4],[7,3],[8,2],[9,1],[10,1],['B',6]]
+    for i in range(10):
+        for j in range(10):
+            if i < 4 and j < 10:
+                a = random.randint(0,len(pecas)-1)
+                jogo_inicial[i][j] = pecas[a][0] # código da peça
+                pecas[a][1] -= 1
+                if pecas[a][1] == 0:
+                    pecas.remove(pecas[a])
+            elif i > 5 and j < 10:
+                a = random.randint(0,len(pecas2)-1)
+                jogo_inicial[i][j] = pecas2[a][0] # código da peça
+                pecas2[a][1] -= 1
+                if pecas2[a][1] == 0:
+                    pecas2.remove(pecas2[a])
+    mostraMatriz(jogo_inicial)
+
        
 if __name__ == "__main__":
     '''
@@ -81,7 +111,7 @@ if __name__ == "__main__":
     thread.start_new_thread(send_data,())
 
     name = ""
-
+    cria_matriz_inicial()
     #desenha_tabuleiro(25,25,62)
     #desenha_caixa(705,25,62)
     #desenha_botoes(675,590,60)
@@ -111,7 +141,7 @@ if __name__ == "__main__":
 
         screen.fill(cinza)
         desenha_chat(705,400,248)
-        block = font.render(name, True, (0, 0, 0))
+        block = f_chat.render(name, True, (0, 0, 0))
         rect = block.get_rect()
         rect.center = (905,500)
         screen.blit(block, rect)
