@@ -15,6 +15,9 @@ displayH = 900
 cinza = (240, 240, 240)
 preto = (0, 0, 0)
 
+font = pygame.font.Font(None, 25)
+myfont = pygame.font.SysFont('arial', 25)
+
 screen = pygame.display.set_mode((displayW,displayH),0,32)
 screen.fill(cinza)
 
@@ -38,13 +41,15 @@ def recv_data():
             print("O servidor finalizou a conexão.")
             thread.interrupt_main()
             break
-        else:
+        elif recv_data.split(",")[0] == '1': # código de mensagem
             print("Dado recebido: ", recv_data)
+            textsurface = myfont.render(recv_data.split(",")[1], True, (255, 0, 0))
+            screen.blit(textsurface,(710,405))
 
 def send_data(msg):
     # Envia dados para outros clientes conectados ao servidor
     while 1:
-        if msg == "q" or msg == "Q": # finaliza com q ou Q
+        if msg.split(",")[1] == "q" or msg.split(",")[1] == "Q": # finaliza com q ou Q
             client_socket.send(msg)
             thread.interrupt_main()
             break
@@ -56,20 +61,25 @@ def desenha_chat(dist, bordaSup, tam):
     pygame.draw.rect(screen, cinza, (dist,bordaSup,tam*3/2,tam))
     pygame.draw.rect(screen, preto, (dist,bordaSup,tam*3/2,tam),1)
 
+def protocolo(tipo, msg):
+    return "%d," %(tipo)+msg
+
        
 if __name__ == "__main__":
-
-    print("Conectando ao servidor em 127.0.0.1:5000")
+    '''
+    sys.argv[1] ip
+    sys.argv[2] porta
+    '''
+    print("Conectando ao servidor em %s:%s"%(sys.argv[1],sys.argv[2]))
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(('127.0.0.1', 5000))
+    client_socket.connect((sys.argv[1], int(sys.argv[2])))
 
-    print("Conectado ao servidor em 127.0.0.1:5000")
+    print("Conectado ao servidor em %s:%s"%(sys.argv[1],sys.argv[2]))
 
     thread.start_new_thread(recv_data,())
     thread.start_new_thread(send_data,())
 
-    font = pygame.font.Font(None, 25)
     name = ""
 
     #desenha_tabuleiro(25,25,62)
@@ -93,21 +103,20 @@ if __name__ == "__main__":
                 elif event.key == K_BACKSPACE:
                     name = name[:-1]
                 elif event.key == K_RETURN:
-                    print(name)
+                    name = protocolo(1,name) # 1 significa 'tipo mensagem'
                     send_data(name)
                     name = ""
                 elif event.key == K_SPACE:
                     name += " "
 
-        screen.fill (cinza)
+        screen.fill(cinza)
         desenha_chat(705,400,248)
         block = font.render(name, True, (0, 0, 0))
         rect = block.get_rect()
-        #rect.center = screen.get_rect().center
         rect.center = (905,500)
         screen.blit(block, rect)
         pygame.display.flip()
-        #pygame.display.update()
+
 
     try:
         while 1:

@@ -2,6 +2,7 @@
 import socket
 import select
 import string
+import sys
  
 def broadcast_data (sock, message):
 
@@ -11,12 +12,16 @@ def broadcast_data (sock, message):
             socket.send(message)
 
 if __name__ == "__main__":
+    '''
+    sys.argv[1] ip
+    sys.argv[2] porta
+    '''
 
     # Lista para manter a trajetoria dos descritores de socket
     CONNECTION_LIST=[]
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(("127.0.0.1", 5000))
+    server_socket.bind((sys.argv[1], int(sys.argv[2])))
     server_socket.listen(10)
 
     # Adiciona o socket do servidor na lista de conexoes legiveis
@@ -48,7 +53,7 @@ if __name__ == "__main__":
 
                 if data:
                     # Processa dados validos de cliente
-                    if data == "q" or data == "Q": # finaliza com q ou Q
+                    if data.split(",")[1] == "q" or data.split(",")[1] == "Q": # finaliza com q ou Q
                         broadcast_data(sock, "Cliente (%s, %s) saiu" % addr)
                         print("Cliente (%s, %s) saiu" % addr)
                         sock.close()
