@@ -15,6 +15,13 @@ id_jogador = sys.argv[3]
 displayW = 1100
 displayH = 900
 
+# definição de cores
+back = (154,255,208)
+vermelho = (225, 0, 0)
+verde = (0, 190, 0)
+azul = (0, 0, 255)
+lago = (0, 220, 220)
+branco = (255, 255, 255)
 cinza = (240, 240, 240)
 preto = (0, 0, 0)
 
@@ -23,6 +30,7 @@ f_chat2 = pygame.font.SysFont('arial', 25)
 
 casas = [26,88,150,212,274,336,398,460,522,584]
 jogo_inicial = [[' ']*10 for c in range(10)] # gera matriz quadrada de ordem 10
+jogo_atual = [[' ']*10 for c in range(10)]
 
 screen = pygame.display.set_mode((displayW,displayH),0,32)
 screen.fill(cinza)
@@ -31,6 +39,9 @@ screen.fill(cinza)
 #teste.fill((255,0,0))
 
 pygame.display.set_caption('combate')
+
+
+####################### COMUNICAÇÃO #######################
 
 def recv_data():
     # Recebe dados de outros clientes conectados ao servidor
@@ -51,6 +62,7 @@ def recv_data():
             print("Dado recebido: ", recv_data)
             textsurface = f_chat.render(recv_data.split(",")[1], True, (255, 0, 0))
             screen.blit(textsurface,(710,405))
+            #pygame.display.update() # não mostra sem, quebra quando tem
 
 def send_data(msg):
     # Envia dados para outros clientes conectados ao servidor
@@ -63,12 +75,10 @@ def send_data(msg):
             client_socket.send(msg)
             break
 
-def desenha_chat(dist, bordaSup, tam):
-    pygame.draw.rect(screen, cinza, (dist,bordaSup,tam*3/2,tam))
-    pygame.draw.rect(screen, preto, (dist,bordaSup,tam*3/2,tam),1)
-
 def protocolo(tipo, msg):
     return "%d," %(tipo)+msg
+
+####################### BACK #######################
 
 def mostraMatriz(matriz):
     for i in range(len(matriz)):
@@ -99,6 +109,41 @@ def cria_matriz_inicial():
                 jogo_inicial[i][j] = 'X'
 
     mostraMatriz(jogo_inicial)
+    valores_matriz()
+
+def valores_matriz(): # adicionar posicao do quadrado
+    for i in range(10):
+        for j in range(10):
+            jogo_inicial[i][j] = {'posX':casas[i],'posY':casas[i],'label':jogo_inicial[i][j]}
+
+    jogo_atual = jogo_inicial[:]
+    #mostraMatriz(jogo_inicial)
+
+####################### INTERFACE #######################
+
+def desenha_chat(dist, bordaSup, tam):
+    pygame.draw.rect(screen, cinza, (dist,bordaSup,tam*3/2,tam))
+    pygame.draw.rect(screen, preto, (dist,bordaSup,tam*3/2,tam),1)
+
+def cor_quadrado(i,j):
+    if j < 4:
+        return preto
+    elif j > 5:
+        return verde
+    elif j > 3 and j < 6 and i > 1 and i < 4  or i > 5 and i < 8:
+        return lago
+    else:
+        return cinza
+
+def desenha_tabuleiro(dist, bordaSup, tam):
+    for i in range(10):
+        for j in range(10):
+            pygame.draw.rect(screen, cor_quadrado(i,j), (dist+tam*i,bordaSup+tam*j,tam,tam))
+            pygame.draw.rect(screen, branco, (dist+tam*i,bordaSup+tam*j,tam,tam),1)
+            #textsurface = f_chat.render(jogo_atual[i][j][0], True, (255, 0, 0))
+            #screen.blit(textsurface,(i*3/2,j*3/2))
+
+ 
 
        
 if __name__ == "__main__":
@@ -120,7 +165,7 @@ if __name__ == "__main__":
     
     name = ""
     cria_matriz_inicial()
-
+    desenha_tabuleiro(25,25,62)
     while True:
 
         for event in pygame.event.get():
@@ -142,8 +187,7 @@ if __name__ == "__main__":
                     name = ""
                 elif event.key == K_SPACE:
                     name += " "
-
-        screen.fill(cinza)
+        pygame.display.update()
         desenha_chat(705,400,248)
         block = f_chat.render(name, True, (0, 0, 0))
         rect = block.get_rect()
