@@ -29,8 +29,10 @@ f_chat = pygame.font.Font(None, 25)
 f_chat2 = pygame.font.SysFont('arial', 25)
 
 casas = [26,88,150,212,274,336,398,460,522,584]
-jogo_inicial = [[' ']*10 for c in range(10)] # gera matriz quadrada de ordem 10, cada índice com 3 'argumentos'
-jogo_atual = [[' ']*10 for c in range(10)]
+jogo_inicial = [[[' ']*3 for c in range(10)] for d in range (10)]
+ # gera matriz quadrada de ordem 10, cada índice com 3 'argumentos'
+jogo_atual = [[[' ']*3 for c in range(10)] for d in range (10)]
+
 
 screen = pygame.display.set_mode((displayW,displayH),0,32)
 screen.fill(cinza)
@@ -84,7 +86,7 @@ def mostraMatriz(matriz):
     for i in range(len(matriz)):
         print '|',
         for j in range(len(matriz)):
-            print matriz[i][j],
+            print matriz[i][j][0],
         print '|\n'
 
 def cria_matriz_inicial():
@@ -95,35 +97,34 @@ def cria_matriz_inicial():
         for j in range(10):
             if i < 4 and j < 10:
                 a = random.randint(0,len(pecas)-1)
-                jogo_inicial[i][j] = pecas[a][0] # código da peça
+                jogo_inicial[i][j][0] = pecas[a][0] # código da peça
                 pecas[a][1] -= 1
                 if pecas[a][1] == 0:
                     pecas.remove(pecas[a])
             elif i > 5 and j < 10:
                 a = random.randint(0,len(pecas2)-1)
-                jogo_inicial[i][j] = pecas2[a][0] # código da peça
+                jogo_inicial[i][j][0] = pecas2[a][0] # código da peça
                 pecas2[a][1] -= 1
                 if pecas2[a][1] == 0:
                     pecas2.remove(pecas2[a])
             elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
-                jogo_inicial[i][j] = 'X'
+                jogo_inicial[i][j][0] = 'X'
 
-    mostraMatriz(jogo_inicial)
+    #mostraMatriz(jogo_inicial)
     valores_matriz()
 
 def valores_matriz(): # adicionar posicao do quadrado
     for i in range(10):
         for j in range(10):
-            pass
             #jogo_inicial[i][j] = {'label':jogo_inicial[i][j],'posX':casas[i],'posY':casas[i]}
-            #jogo_inicial[i][j][1] = casas[i]
-            #jogo_inicial[i][j][2] = casas[j]
+            jogo_inicial[i][j][1] = casas[i]
+            jogo_inicial[i][j][2] = casas[j]
 
 
     #mostraMatriz(jogo_inicial)
     jogo_atual = jogo_inicial[:]
 
-    #mostraMatriz(jogo_inicial)
+    mostraMatriz(jogo_inicial)
 
 ####################### INTERFACE #######################
 
@@ -146,8 +147,9 @@ def desenha_tabuleiro(dist, bordaSup, tam):
         for j in range(10):
             pygame.draw.rect(screen, cor_quadrado(i,j), (dist+tam*i,bordaSup+tam*j,tam,tam))
             pygame.draw.rect(screen, branco, (dist+tam*i,bordaSup+tam*j,tam,tam),1)
-            #textsurface = f_chat.render(jogo_atual[i][j][0], True, (255, 0, 0))
-            #screen.blit(textsurface,(i*3/2,j*3/2))
+            a = jogo_atual[i][j][0]
+            textsurface = f_chat.render(str(jogo_inicial[j][i][0]), True, (255, 0, 0)) # por algum motivo está invertendo
+            screen.blit(textsurface,(dist+tam*i+tam/2,bordaSup+tam*j+tam/2))
 
  
 
