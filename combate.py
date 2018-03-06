@@ -10,6 +10,8 @@ from pygame.locals import *
 
 pygame.init()
 
+id_jogador = sys.argv[3]
+
 displayW = 1100
 displayH = 900
 
@@ -76,6 +78,7 @@ def mostraMatriz(matriz):
         print '|\n'
 
 def cria_matriz_inicial():
+    print id_jogador
     pecas = [['F',1],[1,1],[2,8],[3,5],[4,4],[5,4],[6,4],[7,3],[8,2],[9,1],[10,1],['B',6]]
     pecas2 = [['F',1],[1,1],[2,8],[3,5],[4,4],[5,4],[6,4],[7,3],[8,2],[9,1],[10,1],['B',6]]
     for i in range(10):
@@ -92,13 +95,17 @@ def cria_matriz_inicial():
                 pecas2[a][1] -= 1
                 if pecas2[a][1] == 0:
                     pecas2.remove(pecas2[a])
+            elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
+                jogo_inicial[i][j] = 'X'
+
     mostraMatriz(jogo_inicial)
 
        
 if __name__ == "__main__":
     '''
-    sys.argv[1] ip
+    sys.argv[1] IP
     sys.argv[2] porta
+    sys.argv[3] ID
     '''
     print("Conectando ao servidor em %s:%s"%(sys.argv[1],sys.argv[2]))
 
@@ -110,13 +117,10 @@ if __name__ == "__main__":
     thread.start_new_thread(recv_data,())
     thread.start_new_thread(send_data,())
 
+    
     name = ""
     cria_matriz_inicial()
-    #desenha_tabuleiro(25,25,62)
-    #desenha_caixa(705,25,62)
-    #desenha_botoes(675,590,60)
-    #desenha_chat(705,400,248)
-    #chat()
+
     while True:
 
         for event in pygame.event.get():

@@ -39,7 +39,14 @@ if __name__ == "__main__":
                 CONNECTION_LIST.append(sockfd)
                 print("Cliente (%s, %s) conectado" % addr)
                 broadcast_data(sockfd, "Cliente (%s, %s) conectado" % addr)
-
+                '''
+                if len(CONNECTION_LIST) == 2:
+                    print("2,0")
+                    broadcast_data(sockfd, "2,0")
+                if len(CONNECTION_LIST) == 3:
+                    print("2,1")
+                    broadcast_data(sockfd, "2,1")
+                '''
             else:
                 # Processa dado recebido por cliente
                 try:
