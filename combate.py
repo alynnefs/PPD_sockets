@@ -29,7 +29,7 @@ f_chat = pygame.font.Font(None, 25)
 f_chat2 = pygame.font.SysFont('arial', 25)
 
 casas = [26,88,150,212,274,336,398,460,522,584]
-jogo_inicial = [[' ']*10 for c in range(10)] # gera matriz quadrada de ordem 10
+jogo_inicial = [[' ']*10 for c in range(10)] # gera matriz quadrada de ordem 10, cada índice com 3 'argumentos'
 jogo_atual = [[' ']*10 for c in range(10)]
 
 screen = pygame.display.set_mode((displayW,displayH),0,32)
@@ -114,9 +114,15 @@ def cria_matriz_inicial():
 def valores_matriz(): # adicionar posicao do quadrado
     for i in range(10):
         for j in range(10):
-            jogo_inicial[i][j] = {'posX':casas[i],'posY':casas[i],'label':jogo_inicial[i][j]}
+            pass
+            #jogo_inicial[i][j] = {'label':jogo_inicial[i][j],'posX':casas[i],'posY':casas[i]}
+            #jogo_inicial[i][j][1] = casas[i]
+            #jogo_inicial[i][j][2] = casas[j]
 
+
+    #mostraMatriz(jogo_inicial)
     jogo_atual = jogo_inicial[:]
+
     #mostraMatriz(jogo_inicial)
 
 ####################### INTERFACE #######################
