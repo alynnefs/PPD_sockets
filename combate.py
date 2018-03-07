@@ -68,7 +68,8 @@ def recv_data():
 def send_data(msg):
     # Envia dados para outros clientes conectados ao servidor
     while 1:
-        if msg.split(",")[1] == "q" or msg.split(",")[1] == "Q": # finaliza com q ou Q
+        if msg.split(",")[0] == "3" and (msg.split(",")[1] == "q" or msg.split(",")[1] == "Q"): # finaliza com q ou Q
+            client_socket.send('1,o inimigo desistiu') # informa ao inimigo que desistiu
             client_socket.send(msg)
             thread.interrupt_main()
             break
