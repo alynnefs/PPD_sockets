@@ -37,10 +37,7 @@ jogo_atual = [[[' ']*3 for c in range(10)] for d in range (10)]
 screen = pygame.display.set_mode((displayW,displayH),0,32)
 screen.fill(cinza)
 
-#teste = pygame.display.set_mode((600,705),0,8)
-#teste.fill((255,0,0))
-
-pygame.display.set_caption('combate')
+pygame.display.set_caption('combate: jogador 1') if id_jogador == '1' else pygame.display.set_caption('combate: jogador 2')
 
 
 ####################### COMUNICAÇÃO #######################
@@ -113,10 +110,8 @@ def cria_matriz_inicial():
                 pecas2[a][1] -= 1
                 if pecas2[a][1] == 0:
                     pecas2.remove(pecas2[a])
-
     for i in range(4,6):
         for j in range(2,8):
-    #    elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
             if j == 2 or j == 3 or j == 6 or j ==7:
                 jogo_inicial[i][j][0] = 'X'
 
@@ -124,17 +119,42 @@ def cria_matriz_inicial():
     valores_matriz()
 
 def valores_matriz(): # adicionar posicao do quadrado
+    global jogo_atual
     for i in range(10):
         for j in range(10):
             #jogo_inicial[i][j] = {'label':jogo_inicial[i][j],'posX':casas[i],'posY':casas[i]}
             jogo_inicial[i][j][1] = casas[i]
             jogo_inicial[i][j][2] = casas[j]
-
-
     #mostraMatriz(jogo_inicial)
     jogo_atual = jogo_inicial[:]
 
-    mostraMatriz(jogo_inicial)
+    #mostraMatriz(jogo_atual)
+
+def descobre_quadrado(x,y):
+    a = x - ((x-25)%62) + 1
+    b = y - ((y-25)%62) + 1
+    print "a=",a
+    print "b=",b
+    if a == 708 and b == 26: # desistir
+        print "desistir"
+        send_data('3,q') # tipo comando
+    elif a == 956 and b == 26: # reiniciar
+        print "reiniciar"
+        # implementar
+    elif a > 25 and a < 585 and b > 25 and b < 585:
+        movimentacao(a,b)
+
+def movimentacao(a,b):
+    #global jogo_atual
+
+    mostraMatriz(jogo_atual)
+
+    print jogo_atual[casas.index(b)][casas.index(a)]# x e y estao invertidos
+    if id_jogador == '1' and b > 25 and b < 213:
+        print "territorio preto"
+        
+    elif id_jogador == '2' and b > 397 and b < 585:
+        print "territorio verde"
 
 ####################### INTERFACE #######################
 
@@ -173,7 +193,6 @@ def desenha_reiniciar(dist, bordaSup, tam):
     screen.blit(textsurface,(dist+tam/2,bordaSup+tam/2-5))
 
 ####################### MAIN ####################### 
-
        
 if __name__ == "__main__":
     '''
@@ -206,7 +225,7 @@ if __name__ == "__main__":
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x,y = pygame.mouse.get_pos()
                 print("X E Y ",x,y)
-                #descobre_peca(x,y)
+                descobre_quadrado(x,y)
             elif event.type == KEYDOWN:
                 if event.unicode.isalpha():
                     name += event.unicode
