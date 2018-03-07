@@ -95,7 +95,6 @@ def cria_matriz_inicial():
     if id_jogador == '1':
         for i in range(4):
             for j in range(10):
-            #if i < 4 and j < 10:
                 a = random.randint(0,len(pecas)-1)
                 jogo_inicial[i][j][0] = pecas[a][0] # código da peça
                 pecas[a][1] -= 1
@@ -104,7 +103,6 @@ def cria_matriz_inicial():
     elif id_jogador == '2':
         for i in range(6,10):
             for j in range(10):
-            #elif i > 5 and j < 10:
                 a = random.randint(0,len(pecas2)-1)
                 jogo_inicial[i][j][0] = pecas2[a][0] # código da peça
                 pecas2[a][1] -= 1
@@ -125,33 +123,50 @@ def valores_matriz(): # adicionar posicao do quadrado
             #jogo_inicial[i][j] = {'label':jogo_inicial[i][j],'posX':casas[i],'posY':casas[i]}
             jogo_inicial[i][j][1] = casas[i]
             jogo_inicial[i][j][2] = casas[j]
-    #mostraMatriz(jogo_inicial)
+    print("inicial")
+    mostraMatriz(jogo_inicial)
     jogo_atual = jogo_inicial[:]
-
     #mostraMatriz(jogo_atual)
+    ### para testar reiniciar:
+    jogo_atual[1][2],jogo_atual[2][1] = jogo_atual[2][1],jogo_atual[1][2]
+    #jogo_atual = jogo_atual[:]
+    print("atual")
+    mostraMatriz(jogo_atual)
 
 def descobre_quadrado(x,y):
+    global jogo_atual
     a = x - ((x-25)%62) + 1
     b = y - ((y-25)%62) + 1
     print "a=",a
     print "b=",b
-    if a == 708 and b == 26: # desistir
+    if a >= 646 and a <= 832 and b >= 26 and b <= 88: # desistir
         print "desistir"
         send_data('3,q') # tipo comando
-    elif a == 956 and b == 26: # reiniciar
+    elif a >= 894 and a <= 1018 and b >= 26 and b <= 88: # reiniciar
         print "reiniciar"
-        # implementar
+        '''
+        jogo_atual = jogo_inicial[:]
+        desenha_tabuleiro(25,25,62)
+        mostraMatriz(jogo_atual)
+        #pygame.display.flip()
+        '''
     elif a > 25 and a < 585 and b > 25 and b < 585:
         movimentacao(a,b)
 
-def movimentacao(a,b):
-    #global jogo_atual
-
+peca = ''
+def movimentacao(a,b): # ainda nao funciona
+    global jogo_atual
+    global peca
+    pxarray = pygame.PixelArray(screen)
     mostraMatriz(jogo_atual)
 
-    print jogo_atual[casas.index(b)][casas.index(a)]# x e y estao invertidos
+    peca = jogo_atual[casas.index(b)][casas.index(a)]# x e y estao invertidos
+    print "peça ",peca
+
     if id_jogador == '1' and b > 25 and b < 213:
         print "territorio preto"
+        if pxarray[a, b+60] == 48640 or pxarray[a, b+60] == 15790320:
+            print("para baixo")
         
     elif id_jogador == '2' and b > 397 and b < 585:
         print "territorio verde"
@@ -177,7 +192,7 @@ def desenha_tabuleiro(dist, bordaSup, tam):
         for j in range(10):
             pygame.draw.rect(screen, cor_quadrado(i,j), (dist+tam*i,bordaSup+tam*j,tam,tam))
             pygame.draw.rect(screen, branco, (dist+tam*i,bordaSup+tam*j,tam,tam),1)
-            a = jogo_atual[i][j][0]
+            #a = jogo_atual[i][j][0]
             cor = branco if id_jogador == '1' else preto
             textsurface = f_chat.render(str(jogo_inicial[j][i][0]), True, cor) # por algum motivo está invertendo
             screen.blit(textsurface,(dist+tam*i+tam/2,bordaSup+tam*j+tam/2))
@@ -217,7 +232,7 @@ if __name__ == "__main__":
     desenha_desistir(700,25,75)
     desenha_reiniciar(925,25,75)
     while True:
-
+        key=pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -237,6 +252,30 @@ if __name__ == "__main__":
                     name = ""
                 elif event.key == K_SPACE:
                     name += " "
+            elif key[pygame.K_DOWN]:
+                print "DOWN"
+                '''
+                if peca != '' and verifica_baixo():
+                    move_baixo()
+                '''
+            elif key[pygame.K_UP]:
+                print "UP"
+                '''
+                if peca != '' and verifica_cima():
+                    move_cima()
+                '''
+            elif key[pygame.K_LEFT]:
+                print "LEFT"
+                '''
+                if peca != '' and verifica_esquerda():
+                    move_esquerda()
+                '''
+            elif key[pygame.K_RIGHT]:
+                print "RIGHT"
+                '''
+                if peca != '' and verifica_direita():
+                    move_direita()
+                '''
         pygame.display.update()
         desenha_chat(705,400,248)
         block = f_chat.render(name, True, (0, 0, 0))
