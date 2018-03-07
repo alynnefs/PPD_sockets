@@ -13,7 +13,7 @@ pygame.init()
 id_jogador = sys.argv[3]
 
 displayW = 1100
-displayH = 900
+displayH = 800
 
 # definição de cores
 back = (154,255,208)
@@ -113,12 +113,12 @@ def cria_matriz_inicial():
                 pecas2[a][1] -= 1
                 if pecas2[a][1] == 0:
                     pecas2.remove(pecas2[a])
-    else:
-        for i in range(4,6):
-            for j in range(2,8):
-        #    elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
-                if j == 2 or j == 3 or j == 6 or j ==7:
-                    jogo_inicial[i][j][0] = 'X'
+
+    for i in range(4,6):
+        for j in range(2,8):
+    #    elif i < 6 and (j == 2 or j == 3 or j == 6 or j == 7):
+            if j == 2 or j == 3 or j == 6 or j ==7:
+                jogo_inicial[i][j][0] = 'X'
 
     #mostraMatriz(jogo_inicial)
     valores_matriz()
@@ -158,10 +158,21 @@ def desenha_tabuleiro(dist, bordaSup, tam):
             pygame.draw.rect(screen, cor_quadrado(i,j), (dist+tam*i,bordaSup+tam*j,tam,tam))
             pygame.draw.rect(screen, branco, (dist+tam*i,bordaSup+tam*j,tam,tam),1)
             a = jogo_atual[i][j][0]
-            textsurface = f_chat.render(str(jogo_inicial[j][i][0]), True, (255, 0, 0)) # por algum motivo está invertendo
+            cor = branco if id_jogador == '1' else preto
+            textsurface = f_chat.render(str(jogo_inicial[j][i][0]), True, cor) # por algum motivo está invertendo
             screen.blit(textsurface,(dist+tam*i+tam/2,bordaSup+tam*j+tam/2))
 
- 
+def desenha_desistir(dist, bordaSup, tam):
+    pygame.draw.rect(screen, preto, (dist,bordaSup,tam*2,tam),1)
+    textsurface = f_chat.render("desistir", True, preto)
+    screen.blit(textsurface,(dist+tam/2,bordaSup+tam/2-5))
+
+def desenha_reiniciar(dist, bordaSup, tam):
+    pygame.draw.rect(screen, preto, (dist,bordaSup,tam*2,tam),1)
+    textsurface = f_chat.render("reiniciar", True, preto)
+    screen.blit(textsurface,(dist+tam/2,bordaSup+tam/2-5))
+
+####################### MAIN ####################### 
 
        
 if __name__ == "__main__":
@@ -184,6 +195,8 @@ if __name__ == "__main__":
     name = ""
     cria_matriz_inicial()
     desenha_tabuleiro(25,25,62)
+    desenha_desistir(700,25,75)
+    desenha_reiniciar(925,25,75)
     while True:
 
         for event in pygame.event.get():
